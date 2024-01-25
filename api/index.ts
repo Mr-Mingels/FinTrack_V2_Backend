@@ -6,6 +6,7 @@ import session from "express-session"
 import MongoDBStore from 'connect-mongo'
 import connectToMongoDb from '../controllers/mongoController'
 import authRouter from '../routes/authRoutes'
+import budgetRouter from '../routes/budgetRoutes'
 import { localStrategy, session as passportSession } from '../controllers/authController'
 
 // Load environment variables
@@ -64,6 +65,7 @@ app.use(passportSession);
 
 // API Routes setup
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/budget', budgetRouter)
 
 // Connect to the database
 connectToMongoDb()
