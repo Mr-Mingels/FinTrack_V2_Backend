@@ -20,12 +20,14 @@ const budgetSchema = new mongoose.Schema({
     budgetName: {
         type: String,
         required: true,
-        unique: false
+    },
+    monthlyBudgetAmount: {
+        type: String,
+        required: true
     },
     categories: {
         type: [categorySchema],
         required: true,
-        unique: false
     },
     createdAt: { type: Date, default: Date.now },
 });

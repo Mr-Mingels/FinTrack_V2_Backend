@@ -10,6 +10,7 @@ export const AddBudget = async (req: Request, res: Response) => {
         const budget = new Budget({
             user: user._id,
             budgetName: req.body.budgetName,
+            monthlyBudgetAmount: req.body.monthlyBudgetAmount,
             categories: req.body.budgetCategories
         });
         await budget.save()
@@ -19,3 +20,13 @@ export const AddBudget = async (req: Request, res: Response) => {
         res.status(500).send({ message: "Server error" });
     }
 };
+
+export const GetBudgets = async (req: Request, res: Response) => {
+    try {
+        const allBudgets = await Budget.find({})
+        res.status(200).json(allBudgets)
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Server error" });
+    }
+}
