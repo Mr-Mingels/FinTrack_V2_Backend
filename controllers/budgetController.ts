@@ -14,7 +14,30 @@ export const AddBudget = async (req: Request, res: Response) => {
             categories: req.body.budgetCategories
         });
         await budget.save()
-        return res.status(200).send({ message: "Budget Successfully Added!" });
+        return res.status(200).json(budget);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Server error" });
+    }
+};
+
+export const EditBudget = async (req: Request, res: Response) => {
+    try {
+        const budgetId = req.body.budgetId;
+
+        const budget = await Budget.findById(budgetId);
+
+        if (!budget) {
+            return res.status(404).json({ message: "Budget not found" });
+        }
+
+        budget.budgetName = req.body.budgetName;
+        budget.monthlyBudgetAmount = req.body.monthlyBudgetAmount;
+        budget.categories = req.body.budgetCategories;
+
+        await budget.save();
+        
+        return res.status(200).json(budget);
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: "Server error" });
