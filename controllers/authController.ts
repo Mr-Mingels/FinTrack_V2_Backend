@@ -48,7 +48,6 @@ export const LogIn = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     passport.authenticate("local", (err: any, user: any, info: any) => {
-        console.log(user, info);
         if (err) {
             console.error(`Error: ${err}`);
             return res.status(500).send({ message: `Error: ${err}` });

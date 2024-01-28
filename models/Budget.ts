@@ -15,11 +15,11 @@ const budgetSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
+        required: true
     },
     budgetName: {
         type: String,
-        required: true,
+        required: true
     },
     monthlyBudgetAmount: {
         type: String,
@@ -28,6 +28,10 @@ const budgetSchema = new mongoose.Schema({
     categories: {
         type: [categorySchema],
         required: true,
+    },
+    updatedAt: {
+        type: Date,
+        required: true
     },
     createdAt: { type: Date, default: Date.now },
 });
