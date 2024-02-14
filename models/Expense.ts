@@ -12,8 +12,18 @@ const expenseSchema = new mongoose.Schema({
         required: true
     },
     budgetCategory: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+        budgetCategoryName: {
+            type: String,
+            required: true
+        },
+        budgetCategoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        },
+        budgetCategoryPercentage: {
+            type: Number,
+            required: true
+        }
     },
     expenseAmount: {
         type: String,
@@ -22,6 +32,10 @@ const expenseSchema = new mongoose.Schema({
     description: {
         type: String,
         required: false,
+    },
+    updatedAt: {
+        type: Date,
+        required: true
     },
     createdAt: { type: Date, default: Date.now },
 });

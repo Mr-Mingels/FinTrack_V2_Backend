@@ -5,15 +5,26 @@ import { UserForClientProp } from '../types';
 export const AddExpense = async (req: Request, res: Response) => {
     try {
         const user = req.user as UserForClientProp;
-
         const expense = new Expense({
             user: user._id,
             budget: req.body.budget,
-            budgetCategory: req.body.budgetCategory,
+            budgetCategory: {
+                budgetCategoryName: req.body.budgetCategory.budgetCategoryName,
+                budgetCategoryPercentage: req.body.budgetCategory.budgetCategoryPercentage,
+                budgetCategoryId: req.body.budgetCategory.budgetCategoryId,
+            },
             expenseAmount: req.body.expenseAmount,
-            description: req.body.description
+            description: req.body.description,
+            updatedAt: new Date()
         });
-        await expense.save()
+
+        await expense.populate({
+            path: 'budget',
+            select: 'budgetName monthlyBudgetAmount categories'
+        })
+
+        await expense.save();
+
         return res.status(200).json(expense);
     } catch (err) {
         console.log(err);
@@ -21,26 +32,35 @@ export const AddExpense = async (req: Request, res: Response) => {
     }
 };
 
+
 export const EditExpense = async (req: Request, res: Response) => {
     try {
-        const budgetId = req.body.budgetId;
+        const expenseId = req.body.expenseId;
 
-        const budget = await Expense.findById(budgetId);
+        const expense = await Expense.findById(expenseId);
 
-        if (!budget) {
+        if (!expense) {
             return res.status(404).json({ message: "Budget not found" });
         }
 
-        /*
-        budget.budgetName = req.body.budgetName;
-        budget.monthlyBudgetAmount = req.body.monthlyBudgetAmount;
-        budget.categories = req.body.budgetCategories;
-        budget.updatedAt = new Date()
-        */
+        expense.budget = req.body.budget;
+        expense.budgetCategory = {
+            budgetCategoryName: req.body.budgetCategory.budgetCategoryName,
+            budgetCategoryPercentage: req.body.budgetCategory.budgetCategoryPercentage,
+            budgetCategoryId: req.body.budgetCategory.budgetCategoryId,
+        },
+        expense.expenseAmount = req.body.expenseAmount;
+        expense.description = req.body.description;
+        expense.updatedAt = new Date()
 
-        await budget.save();
+        await expense.populate({
+            path: 'budget',
+            select: 'budgetName monthlyBudgetAmount categories'
+        })
+
+        await expense.save();
         
-        return res.status(200).json(budget);
+        return res.status(200).json(expense);
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: "Server error" });
@@ -50,8 +70,24 @@ export const EditExpense = async (req: Request, res: Response) => {
 export const GetExpenses = async (req: Request, res: Response) => {
     try {
         const user = req.user as UserForClientProp;
-        const allUserExpenses = await Expense.find({ user: user._id })
+        const allUserExpenses = await Expense.find({ user: user._id }).populate({
+            path: 'budget',
+            select: 'budgetName monthlyBudgetAmount categories'
+        })
         res.status(200).json(allUserExpenses)
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Server error" });
+    }
+}
+
+export const DeleteExpense = async (req: Request, res: Response) => {
+    try {
+        const expenseId = req.body._id;
+
+        await Expense.deleteOne({ _id: expenseId });
+
+        res.status(200).send({ message: "Expense Successfully Deleted!" });
     } catch (err) {
         console.log(err);
         res.status(500).send({ message: "Server error" });
